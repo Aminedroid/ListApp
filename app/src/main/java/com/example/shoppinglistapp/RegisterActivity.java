@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -49,6 +50,7 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                finish();
             }
         });
 
@@ -69,9 +71,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 if (TextUtils.isEmpty(mail) && TextUtils.isEmpty(password)) {
-                    etMailRegsiter.setError("Email field is empty ...");
-                    etPassRegister.setError("Password field is empty ...");
-                    return;
+                    Toast.makeText(RegisterActivity.this, "Fields are empty", Toast.LENGTH_SHORT).show();
                 }
 
                 loadingDialog.startLoadingDialog();
@@ -80,13 +80,19 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, "User have been successfully registred", Toast.LENGTH_SHORT).show();
-                            loadingDialog.dismissDialog();
+                            try {
+                                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                Toast.makeText(RegisterActivity.this, "User have been successfully registred", Toast.LENGTH_SHORT).show();
+                                loadingDialog.dismissDialog();
+                                finish();
+                            } catch (Exception e) {
+                                loadingDialog.dismissDialog();
+                                FirebaseAuthException ex = (FirebaseAuthException) task.getException();
+                                Toast.makeText(RegisterActivity.this, "User registration failed: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         } else {
-                            Toast.makeText(RegisterActivity.this, "User registration failed", Toast.LENGTH_SHORT).show();
                             loadingDialog.dismissDialog();
-                            //FirebaseAuthException e = (FirebaseAuthException) task.getException();
-                            //Toast.makeText(RegisterActivity.this, "Failed Registration: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(RegisterActivity.this, "Internet connexion error/Task failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
