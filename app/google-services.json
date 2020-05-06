@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "526685487173",
+    "firebase_url": "https://shopp-list-app.firebaseio.com",
+    "project_id": "shopp-list-app",
+    "storage_bucket": "shopp-list-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526685487173:android:098e0ad58fd6bc4eb2a32c",
+        "android_client_info": {
+          "package_name": "com.example.shoppinglistapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "526685487173-4j74c81l41npg60mkcgtu3l4lfv6our1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxAom9Zi3Rm-9fvkHTNNRgTQfSPq0txY8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "526685487173-4j74c81l41npg60mkcgtu3l4lfv6our1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
