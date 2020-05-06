@@ -6,7 +6,7 @@
     android:background="@drawable/bg_design"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".RegisterActivity">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -21,12 +21,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@string/login"
+                android:text="@string/register"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textColor="@android:color/white" />
 
             <EditText
-                android:id="@+id/etMailLogin"
+                android:id="@+id/etMailRegister"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -36,7 +36,7 @@
                 android:textColorHint="@android:color/white" />
 
             <EditText
-                android:id="@+id/etPassLogin"
+                android:id="@+id/etPassRegister"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
@@ -46,22 +46,22 @@
                 android:textColorHint="@android:color/white" />
 
             <Button
-                android:id="@+id/btLogin"
+                android:id="@+id/btRegister"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:background="@drawable/round_shape"
-                android:text="@string/login"
+                android:text="@string/register"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@android:color/white" />
 
             <TextView
-                android:id="@+id/tvToSignUp"
+                android:id="@+id/tvToLogin"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:padding="5dp"
-                android:text="@string/tv_register"
+                android:text="@string/tv_login"
                 android:textColor="@android:color/white" />
 
         </LinearLayout>
