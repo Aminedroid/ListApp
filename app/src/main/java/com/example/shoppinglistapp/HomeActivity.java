@@ -2,6 +2,8 @@ package com.example.shoppinglistapp;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.os.Binder;
@@ -11,8 +13,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toolbar;
 
+import com.example.shoppinglistapp.Model.Data;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -30,25 +36,32 @@ public class HomeActivity extends AppCompatActivity {
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
 
+    private RecyclerView rv;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        btFab = findViewById(R.id.btFab);
-
         auth = FirebaseAuth.getInstance();
 
         FirebaseUser user = auth.getCurrentUser();
         String id = user.getUid();
 
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("ShoppingList").child(id);
+        databaseReference = FirebaseDatabase.getInstance().getReference().child(id).child("ShoppingList");
+        databaseReference.keepSynced(true);
 
+        btFab = findViewById(R.id.btFab);
+        rv = findViewById(R.id.rvHome);
 
+        LinearLayoutManager llManager = new LinearLayoutManager(this);
 
+        llManager.setStackFromEnd(true);
+        llManager.setReverseLayout(true);
 
-
+        rv.setHasFixedSize(true);
+        rv.setLayoutManager(llManager);
 
         btFab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,18 +73,18 @@ public class HomeActivity extends AppCompatActivity {
 
     private void customDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        LayoutInflater inflater = getLayoutInflater();
-
-        builder.setView(inflater.inflate(R.layout.input_data, null));
-        builder.setCancelable(true);
+        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
+        View view = inflater.inflate(R.layout.input_data, null);
 
         final AlertDialog dialog = builder.create();
-        dialog.show();
 
-        final EditText etDataType = findViewById(R.id.etDataType);
-        final EditText etDataAmount = findViewById(R.id.etDataAmount);
-        final EditText etDataNote = findViewById(R.id.etDataNote);
-        Button btDataAdd = findViewById(R.id.btDataAdd);
+        dialog.setView(view);
+
+        final EditText etDataType = view.findViewById(R.id.etDataType);
+        final EditText etDataAmount = view.findViewById(R.id.etDataAmount);
+        final EditText etDataNote = view.findViewById(R.id.etDataAmount);
+        Button btDataAdd = view.findViewById(R.id.btDataAdd);
+
 
         btDataAdd.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,30 +92,82 @@ public class HomeActivity extends AppCompatActivity {
                 String type = etDataType.getText().toString().trim();
                 String amount = etDataAmount.getText().toString().trim();
                 String note = etDataNote.getText().toString().trim();
-                int amt = Integer.parseInt(amount);
 
                 if (TextUtils.isEmpty(type)) {
                     etDataType.setError("Type field is empty ...");
                     return;
-                }
-
-                if (TextUtils.isEmpty(amount)) {
+                } else if (TextUtils.isEmpty(amount)) {
                     etDataAmount.setError("Amount field is empty ...");
                     return;
-                }
-
-                if (TextUtils.isEmpty(note)) {
+                } else if (TextUtils.isEmpty(note)) {
                     etDataNote.setError("Note field is empty ...");
                     return;
+                } else {
+                    int amnt = Integer.parseInt(amount);
+                    String id = databaseReference.push().getKey();
+                    String date = DateFormat.getDateInstance().format(new Date());
+                    Data data = new Data(id, amnt, type, note, date);
+
+                    databaseReference.child(id).setValue(data);
+
+                    dialog.dismiss();
                 }
-
-
-                String id = databaseReference.push().getKey();
-                String data = DateFormat.getDateInstance().format(new Date());
-
-                dialog.dismiss();
             }
         });
+
+        dialog.show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        FirebaseRecyclerAdapter<Data, MyViewHolder> adapter = new FirebaseRecyclerAdapter<Data, MyViewHolder>
+                (
+                        Data.class,
+                        R.layout.item_data,
+                        MyViewHolder.class,
+                        databaseReference
+                ) {
+            @Override
+            protected void populateViewHolder(MyViewHolder myViewHolder, Data data, int i) {
+                myViewHolder.setDate(data.getDate());
+                myViewHolder.setType(data.getType());
+                myViewHolder.setNote(data.getNote());
+                myViewHolder.setAmount(data.getAmount());
+            }
+        };
+        rv.setAdapter(adapter);
+    }
+
+    public static class MyViewHolder extends RecyclerView.ViewHolder {
+        View view;
+
+        public MyViewHolder(View item) {
+            super(item);
+            view = item;
+        }
+
+        public void setType(String typ) {
+            TextView type = view.findViewById(R.id.tvItemType);
+            type.setText(typ);
+        }
+
+        public void setNote(String nt) {
+            TextView note = view.findViewById(R.id.tvItemNote);
+            note.setText(nt);
+        }
+
+        public void setDate(String dt) {
+            TextView date = view.findViewById(R.id.tvItemDate);
+            date.setText(dt);
+        }
+
+        public void setAmount(int amt) {
+            TextView amount = view.findViewById(R.id.tvItemAmount);
+            String value = String.valueOf(amt);
+            amount.setText(value);
+        }
 
     }
 }

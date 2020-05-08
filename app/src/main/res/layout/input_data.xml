@@ -30,29 +30,15 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+
                 <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:padding="5dp"
-                        android:text="Type:"
-                        android:textAppearance="?android:textAppearanceMedium" />
-
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3">
-
                     <EditText
                         android:id="@+id/etDataType"
+                        android:hint="Type"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp" />
@@ -70,28 +56,13 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:padding="5dp"
-                        android:text="Amount:"
-                        android:textAppearance="?android:textAppearanceMedium" />
-
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="3">
 
                     <EditText
                         android:id="@+id/etDataAmount"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp" />
+                        android:layout_margin="10dp"
+                        android:hint="Amount"/>
 
                 </RelativeLayout>
 
@@ -102,32 +73,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
-                <RelativeLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:padding="5dp"
-                        android:text="Note:"
-                        android:textAppearance="?android:textAppearanceMedium" />
-
-
-                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3">
+                    android:layout_weight="2">
 
                     <EditText
                         android:id="@+id/etDataNote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="10dp" />
+                        android:layout_margin="10dp"
+                        android:hint="Note"/>
 
                 </RelativeLayout>
 

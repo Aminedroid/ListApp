@@ -57,36 +57,35 @@ public class MainActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(mail)) {
                     etMailLogin.setError("Email field is empty");
-                }
-
-                if (TextUtils.isEmpty(password)) {
+                } else if (TextUtils.isEmpty(password)) {
                     etPassLogin.setError("Password field is empty");
-                }
+                } else if (mail.equals("") && password.equals("")) {
+                    Toast.makeText(MainActivity.this, "Fields are empty", Toast.LENGTH_SHORT).show();
+                } else {
+                    loadingDialog.startLoadingDialog();
 
-                loadingDialog.startLoadingDialog();
-
-                auth.signInWithEmailAndPassword(mail, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            try {
-                                startActivity(new Intent(getApplicationContext(), HomeActivity.class));
-                                Toast.makeText(MainActivity.this, "Welcome back "+mail, Toast.LENGTH_SHORT).show();
+                    auth.signInWithEmailAndPassword(mail, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                try {
+                                    startActivity(new Intent(getApplicationContext(), HomeActivity.class));
+                                    Toast.makeText(MainActivity.this, "Welcome back " + mail, Toast.LENGTH_SHORT).show();
+                                    loadingDialog.dismissDialog();
+                                    finish();
+                                } catch (Exception e) {
+                                    loadingDialog.dismissDialog();
+                                    FirebaseAuthException ex = (FirebaseAuthException) task.getException();
+                                    Toast.makeText(MainActivity.this, "Login failed: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
                                 loadingDialog.dismissDialog();
-                                finish();
-                            } catch (Exception e) {
-                                loadingDialog.dismissDialog();
-                                FirebaseAuthException ex = (FirebaseAuthException) task.getException();
-                                Toast.makeText(MainActivity.this, "Login failed: " + ex.getMessage(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Internet connexion error/Task failed", Toast.LENGTH_SHORT).show();
                             }
-                        } else {
-                            loadingDialog.dismissDialog();
-                            Toast.makeText(MainActivity.this, "Internet connexion error/Task failed", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                });
+                    });
+                }
             }
         });
-
     }
 }

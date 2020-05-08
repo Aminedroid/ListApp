@@ -2,18 +2,19 @@ package com.example.shoppinglistapp.Model;
 
 public class Data {
 
+    String id;
     int amount;
     String type;
     String note;
     String date;
-    String id;
 
-    public Data(int amount, String type, String note, String date, String id) {
+
+    public Data(String id, int amount, String type, String note, String date) {
+        this.id = id;
         this.amount = amount;
         this.type = type;
         this.note = note;
         this.date = date;
-        this.id = id;
     }
 
     public Data() {
