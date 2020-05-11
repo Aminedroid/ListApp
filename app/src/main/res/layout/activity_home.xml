@@ -68,12 +68,20 @@
 
             </androidx.cardview.widget.CardView>
 
+
+            <include
+                android:id="@+id/dialog"
+                layout="@layout/dialog"
+                tools:ignore="InvalidId"
+                android:visibility="visible" />
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHome"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+
             </androidx.recyclerview.widget.RecyclerView>
+
 
         </LinearLayout>
 

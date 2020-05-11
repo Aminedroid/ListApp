@@ -1,29 +1,30 @@
 package com.example.shoppinglistapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
-import android.os.Binder;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.example.shoppinglistapp.Model.Data;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -37,6 +38,7 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAuth auth;
 
     private RecyclerView rv;
+    private ConstraintLayout dialog;
 
 
     @Override
@@ -63,6 +65,19 @@ public class HomeActivity extends AppCompatActivity {
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llManager);
 
+        dialog = findViewById(R.id.dialog);
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                dialog.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         btFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -82,7 +97,7 @@ public class HomeActivity extends AppCompatActivity {
 
         final EditText etDataType = view.findViewById(R.id.etDataType);
         final EditText etDataAmount = view.findViewById(R.id.etDataAmount);
-        final EditText etDataNote = view.findViewById(R.id.etDataAmount);
+        final EditText etDataNote = view.findViewById(R.id.etDataNote);
         Button btDataAdd = view.findViewById(R.id.btDataAdd);
 
 
@@ -95,13 +110,10 @@ public class HomeActivity extends AppCompatActivity {
 
                 if (TextUtils.isEmpty(type)) {
                     etDataType.setError("Type field is empty ...");
-                    return;
                 } else if (TextUtils.isEmpty(amount)) {
                     etDataAmount.setError("Amount field is empty ...");
-                    return;
                 } else if (TextUtils.isEmpty(note)) {
                     etDataNote.setError("Note field is empty ...");
-                    return;
                 } else {
                     int amnt = Integer.parseInt(amount);
                     String id = databaseReference.push().getKey();
@@ -136,6 +148,7 @@ public class HomeActivity extends AppCompatActivity {
                 myViewHolder.setNote(data.getNote());
                 myViewHolder.setAmount(data.getAmount());
             }
+
         };
         rv.setAdapter(adapter);
     }
@@ -170,4 +183,6 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
+
+
 }
