@@ -13,7 +13,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.shoppinglistapp.Model.Data;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -33,12 +36,21 @@ public class HomeActivity extends AppCompatActivity {
 
     //private Toolbar toolbar;
     private FloatingActionButton btFab;
+    private TextView tvTotalAmount;
+    private ImageView ivItemEdit;
+    private ImageView ivItemRemove;
 
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
 
     private RecyclerView rv;
     private ConstraintLayout dialog;
+
+    //Global variables
+    private String typ;
+    private int amt;
+    private String not;
+    private String post_key;
 
 
     @Override
@@ -54,22 +66,34 @@ public class HomeActivity extends AppCompatActivity {
         databaseReference = FirebaseDatabase.getInstance().getReference().child(id).child("ShoppingList");
         databaseReference.keepSynced(true);
 
+        tvTotalAmount = findViewById(R.id.tvTotalAmount);
         btFab = findViewById(R.id.btFab);
         rv = findViewById(R.id.rvHome);
+        ivItemEdit = findViewById(R.id.ivItemEdit);
+        ivItemRemove = findViewById(R.id.ivItemRemove);
 
         LinearLayoutManager llManager = new LinearLayoutManager(this);
-
         llManager.setStackFromEnd(true);
         llManager.setReverseLayout(true);
-
         rv.setHasFixedSize(true);
         rv.setLayoutManager(llManager);
-
         dialog = findViewById(R.id.dialog);
+
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 dialog.setVisibility(View.GONE);
+                if (!dataSnapshot.exists()) {
+                    Toast.makeText(getApplicationContext(), "Empty list", Toast.LENGTH_LONG).show();
+                }
+
+                int totalAmount = 0;
+                for (DataSnapshot snap : dataSnapshot.getChildren()) {
+                    Data data = snap.getValue(Data.class);
+                    totalAmount += data.getAmount();
+                    String sum = String.valueOf(totalAmount + " DT");
+                    tvTotalAmount.setText(sum);
+                }
             }
 
             @Override
@@ -84,6 +108,8 @@ public class HomeActivity extends AppCompatActivity {
                 customDialog();
             }
         });
+
+
     }
 
     private void customDialog() {
@@ -126,7 +152,6 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
-
         dialog.show();
     }
 
@@ -142,16 +167,43 @@ public class HomeActivity extends AppCompatActivity {
                         databaseReference
                 ) {
             @Override
-            protected void populateViewHolder(MyViewHolder myViewHolder, Data data, int i) {
+            protected void populateViewHolder(final MyViewHolder myViewHolder, final Data data, final int i) {
                 myViewHolder.setDate(data.getDate());
                 myViewHolder.setType(data.getType());
                 myViewHolder.setNote(data.getNote());
                 myViewHolder.setAmount(data.getAmount());
+
+                myViewHolder.view.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        LinearLayout llItemDesc = v.findViewById(R.id.llItemNote);
+
+                        if (llItemDesc.getVisibility() == View.GONE) {
+                            llItemDesc.setVisibility(View.VISIBLE);
+                        } else if (llItemDesc.getVisibility() == View.VISIBLE) {
+                            llItemDesc.setVisibility(View.GONE);
+                        }
+                    }
+                });
+
+                myViewHolder.view.setOnLongClickListener(new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        post_key = getRef(i).getKey();
+                        typ = data.getType();
+                        not = data.getNote();
+                        amt = data.getAmount();
+                        updateData();
+                        return true;
+                    }
+                });
             }
 
         };
         rv.setAdapter(adapter);
     }
+
 
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         View view;
@@ -183,6 +235,74 @@ public class HomeActivity extends AppCompatActivity {
         }
 
     }
+
+    public void updateData() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
+        View view = inflater.inflate(R.layout.update_data, null);
+        AlertDialog dialog = builder.create();
+        dialog.setView(view);
+
+
+        final EditText etUpdateType = view.findViewById(R.id.etUpdateType);
+        final EditText etUpdateAmount = view.findViewById(R.id.etUpdateAmount);
+        final EditText etUpdateNote = view.findViewById(R.id.etUpdateNote);
+
+        Button btDataUpdate = view.findViewById(R.id.btDataUpdate);
+
+        etUpdateType.setText(typ);
+        etUpdateType.setSelection(typ.length());
+
+        etUpdateAmount.setText(String.valueOf(amt));
+        etUpdateAmount.setSelection(String.valueOf(amt).length());
+
+        etUpdateNote.setText(not);
+        etUpdateNote.setSelection(not.length());
+
+        btDataUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                /*
+                String type = etUpdateType.getText().toString().trim();
+                String amount = etUpdateAmount.getText().toString().trim();
+                String note = etUpdateNote.getText().toString().trim();
+
+                int intAmount = Integer.parseInt(amount);
+                String date = DateFormat.getDateInstance().format();*/
+
+
+            }
+        });
+        dialog.show();
+    }
+
+    /* //Commented for later fix and use
+    public void updateItem(View view) {
+        Data data = new Data();
+
+        /*
+        //Suspected error could come form getting key
+        post_key = databaseReference.getKey();
+        typ = data.getType();
+        amt = data.getAmount();
+        not = data.getNote();
+        updateData();
+    }*/
+
+    /*
+    public void deleteItem(View view) {
+        deleteData();
+    }
+     //Commented for later fix and use
+    public void deleteData() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
+        View view = inflater.inflate(R.layout.delete_dialog, null);
+        AlertDialog dialog = builder.create();
+        dialog.setView(view);
+        dialog.show();
+    }*/
 
 
 }
