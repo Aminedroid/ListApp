@@ -240,7 +240,7 @@ public class HomeActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
         LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
         View view = inflater.inflate(R.layout.update_data, null);
-        AlertDialog dialog = builder.create();
+        final AlertDialog dialog = builder.create();
         dialog.setView(view);
 
 
@@ -249,6 +249,7 @@ public class HomeActivity extends AppCompatActivity {
         final EditText etUpdateNote = view.findViewById(R.id.etUpdateNote);
 
         Button btDataUpdate = view.findViewById(R.id.btDataUpdate);
+        Button btDataDelete = view.findViewById(R.id.btDataDelete);
 
         etUpdateType.setText(typ);
         etUpdateType.setSelection(typ.length());
@@ -263,15 +264,27 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                /*
                 String type = etUpdateType.getText().toString().trim();
                 String amount = etUpdateAmount.getText().toString().trim();
                 String note = etUpdateNote.getText().toString().trim();
 
                 int intAmount = Integer.parseInt(amount);
-                String date = DateFormat.getDateInstance().format();*/
 
+                String date = DateFormat.getDateInstance().format(new Date());
 
+                //Watch the object attribut order
+                Data data = new Data(post_key, intAmount, type, note, date);
+
+                databaseReference.child(post_key).setValue(data);
+                dialog.dismiss();
+            }
+        });
+
+        btDataDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                databaseReference.child(post_key).removeValue();
+                dialog.dismiss();
             }
         });
         dialog.show();

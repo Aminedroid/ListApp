@@ -58,7 +58,8 @@
                             android:layout_height="wrap_content"
                             android:padding="10dp"
                             android:text="0000"
-                            android:textAppearance="?android:textAppearanceMedium" />
+                            android:textAppearance="?android:textAppearanceMedium"
+                            android:textColor="@android:color/holo_red_dark" />
 
 
                     </RelativeLayout>
@@ -72,8 +73,9 @@
             <include
                 android:id="@+id/dialog"
                 layout="@layout/dialog"
-                tools:ignore="InvalidId"
-                android:visibility="visible" />
+                android:visibility="visible"
+                tools:ignore="InvalidId" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvHome"
                 android:layout_width="match_parent"
