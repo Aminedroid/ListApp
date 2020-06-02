@@ -1,15 +1,22 @@
 package com.example.shoppinglistapp;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.example.shoppinglistapp.Model.Data;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -34,11 +42,11 @@ import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity {
 
-    //private Toolbar toolbar;
+    private Toolbar toolbar;
     private FloatingActionButton btFab;
     private TextView tvTotalAmount;
-    private ImageView ivItemEdit;
-    private ImageView ivItemRemove;
+    private Button btLogout;
+
 
     private DatabaseReference databaseReference;
     private FirebaseAuth auth;
@@ -53,6 +61,7 @@ public class HomeActivity extends AppCompatActivity {
     private String post_key;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +78,8 @@ public class HomeActivity extends AppCompatActivity {
         tvTotalAmount = findViewById(R.id.tvTotalAmount);
         btFab = findViewById(R.id.btFab);
         rv = findViewById(R.id.rvHome);
-        ivItemEdit = findViewById(R.id.ivItemEdit);
-        ivItemRemove = findViewById(R.id.ivItemRemove);
+        toolbar = findViewById(R.id.tbHome);
+        btLogout = findViewById(R.id.btLogout);
 
         LinearLayoutManager llManager = new LinearLayoutManager(this);
         llManager.setStackFromEnd(true);
@@ -109,7 +118,21 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
-
+        toolbar.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                if (btLogout.getVisibility() == v.GONE) {
+                    toolbar.setBackgroundColor(Color.parseColor("#FFFFFF"));
+                    btLogout.setVisibility(v.VISIBLE);
+                    return true;
+                } else if (btLogout.getVisibility() == v.VISIBLE) {
+                    toolbar.setBackgroundColor(Color.parseColor("#FFE6210B"));
+                    btLogout.setVisibility(v.GONE);
+                    return true;
+                }
+                return true;
+            }
+        });
     }
 
     private void customDialog() {
@@ -204,7 +227,6 @@ public class HomeActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
     }
 
-
     public static class MyViewHolder extends RecyclerView.ViewHolder {
         View view;
 
@@ -290,32 +312,11 @@ public class HomeActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    /* //Commented for later fix and use
-    public void updateItem(View view) {
-        Data data = new Data();
-
-        /*
-        //Suspected error could come form getting key
-        post_key = databaseReference.getKey();
-        typ = data.getType();
-        amt = data.getAmount();
-        not = data.getNote();
-        updateData();
-    }*/
-
-    /*
-    public void deleteItem(View view) {
-        deleteData();
+    public void onLogout(View view) {
+        Toast.makeText(getApplicationContext(), "Good bye", Toast.LENGTH_SHORT).show();
+        auth.signOut();
+        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        finish();
+        Toast.makeText(getApplicationContext(),"Logged out safely", Toast.LENGTH_LONG).show();
     }
-     //Commented for later fix and use
-    public void deleteData() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
-        LayoutInflater inflater = LayoutInflater.from(HomeActivity.this);
-        View view = inflater.inflate(R.layout.delete_dialog, null);
-        AlertDialog dialog = builder.create();
-        dialog.setView(view);
-        dialog.show();
-    }*/
-
-
 }
